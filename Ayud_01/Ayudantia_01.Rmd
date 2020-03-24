@@ -62,6 +62,7 @@ Titanic <- data.table(titanic_train)  ## Notar que ahí creamos un objeto que se
 Antes de continuar, es vital saber como funciona el lenguaje de data.table. Por ejemplo:
 
 ```{r data.table}
+#View(Titanic)
 Titanic[1,]  ## Arroja información sobre la primera fila
 Titanic[6:14,]  ## Arroja información sobre la fila 6 a 14
 Titanic[,4]  ## Arroja información sobre la cuarta columna
