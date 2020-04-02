@@ -19,7 +19,8 @@ plot(Chile)
 # 1. ¿De qué clase es cada variable?
 
 # 2. Cree una nueva variable que se llame income1000, que sea igual al ingreso en miles de pesos
-
+Chile$income1000 <- Chile$income/1000
+View(Chile)
 # 3. Cuente cuántas personas votaron por el si, y cuántas por el no
 
 # 4. Cree un nuevo objeto tipo data.table en base al objeto Chile, que se llame Chile2

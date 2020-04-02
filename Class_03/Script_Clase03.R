@@ -11,11 +11,12 @@
 
 library(readxl)
 library(data.table)
-casos<-data.table(read_excel("Class_02/2020-03-17-Casos-confirmados.xlsx",na = "—",trim_ws = TRUE,col_names = TRUE),stringsAsFactors = FALSE)
+
+casos<-data.table(read_excel(path = "Class_02/2020-03-17-Casos-confirmados.xlsx",na = "—",trim_ws = TRUE,col_names = TRUE),stringsAsFactors = FALSE)
 
 casos<-casos[Región=="Metropolitana",]
 
-saveRDS
+saveRDS(casos, "Class_03/casosRM.rds")
 
 write.csv(casos,file = 'Class_03/CasosCovid_RM.csv',fileEncoding = 'UTF-8')
 
@@ -45,18 +46,23 @@ casosRM[,.N,by=.(Sexo)]
 casosRM[,.N,by=.(Sexo,`Centro de salud`)]
 
 #Collapsing by Centro de Salud 
-
+names(casosRM)
+obj1 <- casosRM[,.N, by =.(`Centro de salud`)]
+obj1
 casosRM[,sum(`Casos confirmados`,na.rm = T),by=.(`Centro de salud`)][,V1/sum(V1)]
 
 # collapsing by average age
+class(casos$Edad)
+casos$Edad <- as.numeric(casos$Edad)
+class(casos$Edad)
 
-A<-casosRM[,.(AvAge=mean(Edad,na.rm = T)),by=.(`Centro de salud`)]
+A<-casosRM[,.(AvAge=mean(as.numeric(Edad),na.rm = T)),by=.(`Centro de salud`)]
 
-B<-casosRM[,.(Total_centro=sum(`Casos confirmados`,na.rm = T)),by=.(`Centro de salud`)]
+B<-casosRM[,.(Total_centro=.N),by=.(`Centro de salud`)]
 
-C<-casosRM[Sexo=="Femenino",.(Total_Centro_Mujeres=sum(`Casos confirmados`,na.rm = T)),by=.(`Centro de salud`)]
+C<-casosRM[Sexo=="Femenino",.(Total_Centro_Mujeres=.N),by=.(`Centro de salud`)]
 
-D<-casosRM[Sexo=="Masculino",.(Total_Centro_Hombres=sum(`Casos confirmados`,na.rm = T)),by=.(`Centro de salud`)]
+D<-casosRM[Sexo=="Masculino",.(Total_Centro_Hombres=.N),by=.(`Centro de salud`)]
 
 
 #merging data sets
@@ -69,7 +75,7 @@ ABCD[,porc_mujeres:=Total_Centro_Mujeres/Total_centro]
 
 # reshaping
 
-E<-casosRM[,.(AvAge=mean(Edad,na.rm = T),`Casos confirmados`=sum(`Casos confirmados`,na.rm = T)),by=.(`Centro de salud`,Sexo)]
+E<-casosRM[,.(AvAge=mean(as.numeric(Edad),na.rm = T),`Casos confirmados`=sum(`Casos confirmados`,na.rm = T)),by=.(`Centro de salud`,Sexo)]
 G<-reshape(E,direction = 'wide',timevar = 'Sexo',v.names = c('AvAge','Casos confirmados'),idvar = 'Centro de salud')
 
 #---- Part 2: Visualization  -------------------
